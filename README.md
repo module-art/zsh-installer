@@ -56,6 +56,11 @@ Or edit file ~/.p10k.zsh
 
 See: <https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#configuration-wizard>
 
+To customize color, you can change POWERLEVEL9K_DIR_BACKGROUND value on line 226.
+
+See colors with :
+    for code in {000..255}; do print -P "%F{$code}$code: %F{$code}Color: \uf445\uf445"; done
+
 A cowsay advertising is set by default, just remove it from ~/.zshrc if you want.
 
 See in default/main.yml the plugin list that will be installed.
