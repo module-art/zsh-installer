@@ -3,6 +3,17 @@ Role Name
 
 Installer for zsh, oh my zsh and powerlevel10 theme
 
+Description
+-----------
+
+Zsh is a powerfull shell with a lot of capacities. It will make you forget bash !
+
+[Oh-my-zsh](https://ohmyz.sh/) is a framework that makes zsh easier to use.
+
+And [Powerlevel10](https://github.com/romkatv/powerlevel10k) is a popular customizable theme for oh-my-zsh.
+
+![Powerlevel prompt example](https://sacoche.libre34.org/s/aofHRSib9kfYg8d/preview)
+
 Requirements
 ------------
 
