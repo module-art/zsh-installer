@@ -33,15 +33,12 @@ Example Playbook
 
 For local install
 
-- name: zsh ansible
-
-  hosts: localhost
-
-  connection: local
-  
-  roles:
-
-    - zsh-installer
+    - name: zsh ansible
+      hosts: localhost
+      connection: local
+ 
+      roles:
+        - zsh-installer
 
 License
 -------
