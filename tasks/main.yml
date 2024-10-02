@@ -1,0 +1,152 @@
+---
+# tasks file for zsh-installer
+
+- name: install zsh and other usefull packages
+  ansible.builtin.apt:
+    name: git,zsh,wget,toilet,cowsay
+    state: present
+    update_cache: true
+  become: true
+
+- name: locate zsh
+  ansible.builtin.command:
+    cmd: which zsh
+  register: __zsh_location
+  changed_when: false
+
+- name: change user shell
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    shell: "{{ __zsh_location.stdout }}"
+  become: true
+
+- name: change root shell
+  ansible.builtin.user:
+    name: root
+    shell: "{{ __zsh_location.stdout }}"
+  become: true
+  when: zsh_root
+
+- name: check if oh-my-zsh is already installed
+  ansible.builtin.stat:
+    path: "/home/{{ ansible_user }}/.oh-my-zsh-installed"
+  register: __oh_my_zsh_installed
+
+- name: install oh-my-zsh
+  ansible.builtin.shell:
+    cmd: sh -c "$(wget https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+  when: not __oh_my_zsh_installed.stat.exists
+  register: __oh_my_zsh_installer
+
+- name: display previous command stdout
+  ansible.builtin.debug:
+    var: __oh_my_zsh_installer.stdout
+
+- name: create oh-my-zsh marker file
+  ansible.builtin.copy:
+    dest: "/home/{{ ansible_user }}/.oh-my-zsh-installed"
+    content: 1
+
+- name: clone powerlevel10 theme
+  ansible.builtin.git:
+    repo: https://github.com/romkatv/powerlevel10k.git
+    dest: "/home/{{ ansible_user }}/.oh-my-zsh/custom/themes/powerlevel10k"
+    single_branch: true
+    version: master
+
+- name: clone zsh-autosuggestion plugin
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions.git
+    dest: "/home/{{ ansible_user }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+    single_branch: true
+    version: master
+
+- name: clone zsh-syntax-highlighting plugin
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+    dest: "/home/{{ ansible_user }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+    single_branch: true
+    version: master
+
+- name: backup .zshrc.old 
+  ansible.builtin.copy:
+    remote_src: true
+    src: "/home/{{ ansible_user }}/.zshrc"
+    dest: "/home/{{ ansible_user }}/.zshrc.old"
+
+- name: make user .zshrc from template
+  ansible.builtin.lineinfile:
+    path: "/home/{{ ansible_user }}/.zshrc"
+    line: ZSH_THEME="powerlevel10k/powerlevel10k"
+    regexp: "^ZSH_THEME=.*$"
+    create: true
+
+- name: copy .zshrc to /home/{{ ansible_user }}
+  ansible.builtin.template:
+    src: zshrc-user.j2
+    dest: /home/{{ ansible_user }}/.zshrc
+
+- name: Change ansible default cowsay on localhost
+  ansible.builtin.lineinfile:
+    path: ~/.ansible.cfg
+    line: nocows = True
+    create: true
+    insertafter: "\\[defaults\\]"
+  when: ansible_host == "127.0.0.1"
+
+- name: copy .p10k.zsh file to user localhost
+  ansible.builtin.copy:
+    dest: "/home/{{ ansible_user }}/.p10k.zsh"
+    src: manager-p10k.zsh
+  when: ansible_host == "127.0.0.1"
+
+- name: copy .p10k.zsh file to root localhost
+  ansible.builtin.copy:
+    dest: "/root/.p10k.zsh"
+    src: manager-p10k.zsh
+  when: ansible_host == "127.0.0.1" and zsh_root
+  become: true
+
+- name: copy .p10k.zsh file to user host
+  ansible.builtin.copy:
+    dest: "/home/{{ ansible_user }}//.p10k.zsh"
+    src: grey-host-p10k.zsh
+  when: not ansible_host == "127.0.0.1"
+
+- name: copy .p10k.zsh file to root host
+  ansible.builtin.copy:
+    dest: "/root/.p10k.zsh"
+    src: grey-host-p10k.zsh
+  when: zsh_root and ansible_host != "127.0.0.1"
+  become: true
+
+- name: copy .oh-my-zsh dir to /root
+  ansible.builtin.copy:
+    remote_src: true
+    src: "/home/{{ ansible_user }}/.oh-my-zsh/"
+    dest: "/root/.oh-my-zsh/"
+    owner: root
+    group: root
+  become: true
+  when: zsh_root
+
+- name: make root .zshrc from template
+  ansible.builtin.template:
+    src: zshrc-root.j2
+    dest: /root/.zshrc
+    owner: root
+    group: root
+  become: true
+  when: zsh_root
+
+- name: Avertising
+  ansible.builtin.debug:
+    msg: 
+      - zsh, oh-my-zsh and powerlevel10 theme are installed.
+      - Restart session if one was opened.
+      - Powerlevel wizard configurator will start on your host.
+      - Use Powerlevel wizard configurator to customize your prompt, run 
+      - p10k configure
+      - For remote access fonts must be installed on ssh client so don't necessarily install fonts on server
+      - Manual font installation informations here 
+      - https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#manual-font-installation

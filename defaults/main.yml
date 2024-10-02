@@ -1,0 +1,23 @@
+---
+# defaults file for zsh-installer
+
+welcome_word: none
+#Set to none for no cow message
+cow_message: "Hello !\\nThis server is using zsh instead of bash.\\nFor missing fonts, see:\\nhttps://github.com/romkatv/powerlevel10k?tab=readme-ov-file#manual-font-installation\\nTo customize prompt, run 'p10k configure' or edit ~/.p10k.zsh."
+
+plugins:
+  - git
+  - compleat
+  - history
+  - history-substring-search
+  - rsync
+  - sudo
+  - zsh-autosuggestions
+  - colored-man-pages
+  - pyenv
+  - z
+  - zsh-syntax-highlighting
+  - web-search
+  - dirhistory
+
+zsh_root: true
