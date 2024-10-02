@@ -7,18 +7,20 @@ Requirements
 ------------
 
 Powerlevel10 require specific fonts, see:
+
 <https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#manual-font-installation>
-It's easier to use powerlevel10 theme when it's first installed on local machine, almost for fonts installation.
 
 Your terminal encoding must be set on unicode - UTF8.
 
 Role Variables
 --------------
-Default is
+
 welcome_word: none
+
 Change it if you want to display a short message with toilet when opening terminal.
 
 zsh_root: true
+
 By default, zsh is installed for root account, set to false to keep bash on root.
 
 Some tasks need to set ansible_become_password in host_vars for each host.
@@ -32,10 +34,13 @@ Example Playbook
 For local install
 
 - name: zsh ansible
+
   hosts: localhost
+
   connection: local
   
   roles:
+
     - zsh-installer
 
 License
