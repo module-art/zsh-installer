@@ -1,4 +1,4 @@
-Role Name
+ZSH installer
 =========
 
 Installer for zsh, oh my zsh and powerlevel10 theme
