@@ -68,11 +68,17 @@
     single_branch: true
     version: master
 
+- name: look for .zshrc 
+  ansible.builtin.stat:
+    path: "/home/{{ ansible_user }}/.zshrc"
+  register: __zshrc
+
 - name: backup .zshrc.old 
   ansible.builtin.copy:
     remote_src: true
     src: "/home/{{ ansible_user }}/.zshrc"
     dest: "/home/{{ ansible_user }}/.zshrc.old"
+  when: __zshrc.stat.exists
 
 - name: make user .zshrc from template
   ansible.builtin.lineinfile:
