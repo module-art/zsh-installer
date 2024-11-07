@@ -73,12 +73,17 @@
     path: "/home/{{ ansible_user }}/.zshrc"
   register: __zshrc
 
+- name: look for .zshrc.old 
+  ansible.builtin.stat:
+    path: "/home/{{ ansible_user }}/.zshrc.old"
+  register: __zshrc_old
+
 - name: backup .zshrc.old 
   ansible.builtin.copy:
     remote_src: true
     src: "/home/{{ ansible_user }}/.zshrc"
     dest: "/home/{{ ansible_user }}/.zshrc.old"
-  when: __zshrc.stat.exists
+  when: __zshrc.stat.exists and not __zshrc_old.stat.exists
 
 - name: make user .zshrc from template
   ansible.builtin.lineinfile:
@@ -126,6 +131,12 @@
   when: zsh_root and ansible_host != "127.0.0.1"
   become: true
 
+- name: look for /root/.oh-my-zsh/
+  ansible.builtin.stat:
+    path: "/root/.oh-my-zsh"
+  register: __oh_my_zsh_root
+  become: true
+
 - name: copy .oh-my-zsh dir to /root
   ansible.builtin.copy:
     remote_src: true
@@ -134,7 +145,7 @@
     owner: root
     group: root
   become: true
-  when: zsh_root
+  when: zsh_root and not __oh_my_zsh_root.stat.exists
 
 - name: make root .zshrc from template
   ansible.builtin.template:
@@ -144,6 +155,16 @@
     group: root
   become: true
   when: zsh_root
+
+- name: Install font for nodes with graphical desktop
+  ansible.builtin.get_url:
+    url: https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf
+    dest: /usr/local/share/fonts
+    mode: 0644
+    owner: root
+    group: root
+  when: install_font
+  become: true
 
 - name: Avertising
   ansible.builtin.debug:

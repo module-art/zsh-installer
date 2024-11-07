@@ -21,3 +21,5 @@ plugins:
   - dirhistory
 
 zsh_root: true
+
+install_font: false

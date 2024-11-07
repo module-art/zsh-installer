@@ -14,16 +14,34 @@ And [Powerlevel10](https://github.com/romkatv/powerlevel10k) is a popular custom
 
 ![Powerlevel prompt example](https://sacoche.libre34.org/s/aofHRSib9kfYg8d/preview)
 
+After installation, you can customize your prompt with powerlevel10 wizard:
+
+`p10k configure`
+
+Or edit file ~/.p10k.zsh
+
+See: <https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#configuration-wizard>
+
+To customize color, you can change POWERLEVEL9K_DIR_BACKGROUND value on line 226.
+
+See colors with :
+
+`for code in {000..255}; do print -P "%F{$code}$code: %F{$code}Color: \uf445\uf445"; done`
+
 Requirements
 ------------
+
+sudo access required, set ansible_become_password for each node.
 
 Powerlevel10 requires specific fonts, see:
 
 <https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#manual-font-installation>
 
-Your terminal encoding must be set on unicode - UTF8.
+On host for remote access or on node for local use you may have to change your terminal settings.
 
-sudo access required, set ansible_become_password in host_vars for each host.
+In profile settings, check custom font and choose "MesloLGS NF".
+
+Your terminal encoding must be set on unicode - UTF8.
 
 Role Variables
 --------------
@@ -57,6 +75,9 @@ zsh-plugins installed by default:
       - web-search
       - dirhistory
 
+For nodes with graphical desktop, change that var to true:
+
+install_font: false
 
 Dependencies
 ------------
@@ -82,18 +103,4 @@ BSD
 
 Author Information
 ------------------
-
-After installation, you can customize your prompt with powerlevel10 wizard:
-
-`p10k configure`
-
-Or edit file ~/.p10k.zsh
-
-See: <https://github.com/romkatv/powerlevel10k?tab=readme-ov-file#configuration-wizard>
-
-To customize color, you can change POWERLEVEL9K_DIR_BACKGROUND value on line 226.
-
-See colors with :
-
-`for code in {000..255}; do print -P "%F{$code}$code: %F{$code}Color: \uf445\uf445"; done`
 
